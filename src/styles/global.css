@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-canvas: 246 242 235;
+  --color-surface: 252 249 244;
+  --color-line: 223 215 204;
+  --color-ink: 52 45 40;
+  --color-muted: 122 113 101;
+  --color-accent: 176 120 95;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif text-ink tracking-tight;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  ::selection {
+    background: rgba(176, 120, 95, 0.25);
+  }
+}
+
+@layer components {
+  .ui-card {
+    @apply rounded-card border border-line bg-surface shadow-soft transition duration-150;
+  }
+
+  .ui-card:hover {
+    @apply -translate-y-0.5 shadow-lift;
+  }
+
+  .ui-button {
+    @apply inline-flex items-center justify-center rounded-pill border border-line px-5 py-2 text-[0.7rem] uppercase tracking-[0.35em] text-ink transition duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .ui-button:hover {
+    @apply -translate-y-0.5 shadow-soft;
+  }
+
+  .ui-button:focus-visible {
+    @apply outline-none ring-2 ring-accent/30;
+  }
+
+  .ui-button--primary {
+    @apply border-transparent bg-accent text-surface;
+  }
+
+  .ui-button--ghost {
+    @apply border-transparent bg-transparent text-ink/70;
+  }
+
+  .ui-button--outline {
+    @apply bg-transparent text-ink;
+  }
+
+  .ui-input {
+    @apply w-full rounded-card border border-line bg-surface px-4 py-3 text-sm text-ink shadow-soft transition duration-150 placeholder:text-muted/70 focus:border-accent/60 focus:outline-none focus:ring-2 focus:ring-accent/20;
+  }
+
+  .ui-label {
+    @apply text-xs uppercase tracking-[0.3em] text-muted;
+  }
+
+  .type-title {
+    @apply font-serif text-3xl tracking-tight;
+  }
+
+  .type-subtitle {
+    @apply font-serif text-xl tracking-tight;
+  }
+
+  .type-body {
+    @apply text-sm text-ink/80;
+  }
+
+  .type-eyebrow {
+    @apply text-xs uppercase tracking-[0.35em] text-muted;
+  }
+
+  .type-caption {
+    @apply text-xs text-muted;
+  }
+}
