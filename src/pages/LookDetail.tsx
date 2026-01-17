@@ -109,6 +109,11 @@ const myInputRef = useRef<HTMLInputElement | null>(null)
 
 const handlePickImage = async (kind: 'inspo' | 'me', file: File | null) => {
   if (!file) return
+  
+  // allow picking the same file again
+if (inspoInputRef.current && kind === 'inspo') inspoInputRef.current.value = ''
+if (myInputRef.current && kind === 'me') myInputRef.current.value = ''
+
   if (!user || !look) {
     showToast('You need to be logged in.', 'error')
     return
@@ -400,57 +405,67 @@ const handlePickImage = async (kind: 'inspo' | 'me', file: File | null) => {
   >
     {/* Inspo */}
 <Card className="snap-start overflow-hidden p-0">
-     <div className="flex items-center justify-between gap-4 p-4">
-  <p className="type-eyebrow">Inspo</p>
+  <div className="flex items-center justify-between gap-4 p-4">
+    <p className="type-eyebrow">Inspo</p>
 
-  <div className="flex items-center gap-2">
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      onClick={() => inspoInputRef.current?.click()}
-    >
-      {images.inspoUrl ? 'Replace' : 'Add'}
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button type="button" size="sm" variant="outline" onClick={() => inspoInputRef.current?.click()}>
+        {images.inspoUrl ? 'Replace' : 'Add'}
+      </Button>
 
-    <input
-      ref={inspoInputRef}
-      type="file"
-      accept={getAcceptedTypes()}
-      className="hidden"
-      onChange={(e) => void handlePickImage('inspo', e.target.files?.[0] ?? null)}
-    />
+      <input
+        ref={inspoInputRef}
+        type="file"
+        accept={getAcceptedTypes()}
+        className="hidden"
+        onChange={(e) => void handlePickImage('inspo', e.target.files?.[0] ?? null)}
+      />
+    </div>
   </div>
-</div>
 
-    </Card>
+  <div className="aspect-[4/5] overflow-hidden bg-canvas">
+    {images.inspoUrl ? (
+      <img src={images.inspoUrl} alt="Inspo reference" className="h-full w-full object-cover" />
+    ) : (
+      <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
+        No image yet
+      </div>
+    )}
+  </div>
+</Card>
+
 
     {/* My photo */}
 <Card className="snap-start overflow-hidden p-0">
-     <div className="flex items-center justify-between gap-4 p-4">
-  <p className="type-eyebrow">My photo</p>
+  <div className="flex items-center justify-between gap-4 p-4">
+    <p className="type-eyebrow">My photo</p>
 
-  <div className="flex items-center gap-2">
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      onClick={() => myInputRef.current?.click()}
-    >
-      {images.myUrl ? 'Replace' : 'Add'}
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button type="button" size="sm" variant="outline" onClick={() => myInputRef.current?.click()}>
+        {images.myUrl ? 'Replace' : 'Add'}
+      </Button>
 
-    <input
-      ref={myInputRef}
-      type="file"
-      accept={getAcceptedTypes()}
-      className="hidden"
-      onChange={(e) => void handlePickImage('me', e.target.files?.[0] ?? null)}
-    />
+      <input
+        ref={myInputRef}
+        type="file"
+        accept={getAcceptedTypes()}
+        className="hidden"
+        onChange={(e) => void handlePickImage('me', e.target.files?.[0] ?? null)}
+      />
+    </div>
   </div>
-</div>
 
-    </Card>
+  <div className="aspect-[4/5] overflow-hidden bg-canvas">
+    {images.myUrl ? (
+      <img src={images.myUrl} alt="My look photo" className="h-full w-full object-cover" />
+    ) : (
+      <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
+        No image yet
+      </div>
+    )}
+  </div>
+</Card>
+
   </div>
 </div>
 
