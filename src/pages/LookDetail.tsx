@@ -356,7 +356,8 @@ export default function LookDetail() {
         </div>
       </div>
 
-<div className={layout === 'split' ? 'overflow-x-auto' : ''}>
+<div className={layout === 'split' ? 'overflow-x-auto snap-x snap-mandatory' : ''}>
+
   <div
     className={
       layout === 'split'
@@ -365,7 +366,7 @@ export default function LookDetail() {
     }
   >
     {/* Inspo */}
-    <Card className="overflow-hidden p-0">
+<Card className="snap-start overflow-hidden p-0">
       <div className="space-y-3 p-4">
         <p className="type-eyebrow">Inspo</p>
       </div>
@@ -381,7 +382,7 @@ export default function LookDetail() {
     </Card>
 
     {/* My photo */}
-    <Card className="overflow-hidden p-0">
+<Card className="snap-start overflow-hidden p-0">
       <div className="space-y-3 p-4">
         <p className="type-eyebrow">My photo</p>
       </div>
