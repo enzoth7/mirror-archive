@@ -181,38 +181,37 @@ setLooks(
               : filteredLooks.map((look) => (
                   <Link key={look.id} to={`/look/${look.id}`} className="group">
                     <Card className="overflow-hidden p-0">
- <div className="aspect-[4/5] overflow-hidden bg-canvas">
-  {look.meUrl ? (
-    look.inspoUrl ? (
-      <div className="flex h-full">
-        {/* Inspiration – 40% */}
-        <div className="relative w-[40%] overflow-hidden">
-          <img
-            src={look.inspoUrl}
-            alt="Inspiration"
-            className="h-full w-full object-cover opacity-90"
-          />
-        </div>
-
-        {/* Divider */}
-        <div className="w-px bg-line/60" />
-
-        {/* My look – 60% */}
-        <div className="relative w-[60%] overflow-hidden">
-          <img
-            src={look.meUrl}
-            alt={look.title || 'My look'}
-            className="h-full w-full object-cover transition duration-150 group-hover:scale-[1.01]"
-          />
-        </div>
+<div className="aspect-[4/5] overflow-hidden bg-canvas">
+  {look.meUrl && look.inspoUrl ? (
+    <div className="flex h-full">
+      {/* Inspiration – 40% */}
+      <div className="relative w-[40%] overflow-hidden">
+        <img src={look.inspoUrl} alt="Inspiration" className="h-full w-full object-cover opacity-90" />
       </div>
-    ) : (
-      <img
-        src={look.meUrl}
-        alt={look.title || 'Look image'}
-        className="h-full w-full object-cover transition duration-150 group-hover:scale-[1.01]"
-      />
-    )
+
+      <div className="w-px bg-line/60" />
+
+      {/* My look – 60% */}
+      <div className="relative w-[60%] overflow-hidden">
+        <img
+          src={look.meUrl}
+          alt={look.title || 'My look'}
+          className="h-full w-full object-cover transition duration-150 group-hover:scale-[1.01]"
+        />
+      </div>
+    </div>
+  ) : look.meUrl ? (
+    <img
+      src={look.meUrl}
+      alt={look.title || 'Look image'}
+      className="h-full w-full object-cover transition duration-150 group-hover:scale-[1.01]"
+    />
+  ) : look.inspoUrl ? (
+    <img
+      src={look.inspoUrl}
+      alt={look.title || 'Inspiration'}
+      className="h-full w-full object-cover opacity-95 saturate-[0.95] transition duration-150 group-hover:scale-[1.01]"
+    />
   ) : (
     <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
       No image yet
