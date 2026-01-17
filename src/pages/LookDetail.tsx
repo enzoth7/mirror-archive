@@ -356,43 +356,48 @@ export default function LookDetail() {
         </div>
       </div>
 
-      <div
-        className={
-          layout === 'split'
-            ? 'grid grid-cols-1 gap-6 md:grid-cols-2'
-            : 'grid grid-cols-1 gap-6 md:grid-cols-1'
-        }
-      >
-        <Card className="overflow-hidden p-0">
-          <div className="space-y-3 p-4">
-            <p className="type-eyebrow">Inspo</p>
-          </div>
-          <div className="aspect-[4/5] overflow-hidden bg-canvas">
-            {images.inspoUrl ? (
-              <img src={images.inspoUrl} alt="Inspo reference" className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
-                No image yet
-              </div>
-            )}
-          </div>
-        </Card>
-
-        <Card className="overflow-hidden p-0">
-          <div className="space-y-3 p-4">
-            <p className="type-eyebrow">My photo</p>
-          </div>
-          <div className="aspect-[4/5] overflow-hidden bg-canvas">
-            {images.myUrl ? (
-              <img src={images.myUrl} alt="My look photo" className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
-                No image yet
-              </div>
-            )}
-          </div>
-        </Card>
+<div className={layout === 'split' ? 'overflow-x-auto' : ''}>
+  <div
+    className={
+      layout === 'split'
+        ? 'grid min-w-[720px] grid-cols-2 gap-4 md:min-w-0'
+        : 'grid grid-cols-1 gap-6'
+    }
+  >
+    {/* Inspo */}
+    <Card className="overflow-hidden p-0">
+      <div className="space-y-3 p-4">
+        <p className="type-eyebrow">Inspo</p>
       </div>
+      <div className="aspect-[4/5] overflow-hidden bg-canvas">
+        {images.inspoUrl ? (
+          <img src={images.inspoUrl} alt="Inspo reference" className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
+            No image yet
+          </div>
+        )}
+      </div>
+    </Card>
+
+    {/* My photo */}
+    <Card className="overflow-hidden p-0">
+      <div className="space-y-3 p-4">
+        <p className="type-eyebrow">My photo</p>
+      </div>
+      <div className="aspect-[4/5] overflow-hidden bg-canvas">
+        {images.myUrl ? (
+          <img src={images.myUrl} alt="My look photo" className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
+            No image yet
+          </div>
+        )}
+      </div>
+    </Card>
+  </div>
+</div>
+
 
       <Card className="p-6">
         <label htmlFor="look-notes" className="ui-label">
