@@ -5,7 +5,9 @@ import Card from '../components/ui/Card'
 import Modal from '../components/ui/Modal'
 import Toast from '../components/ui/Toast'
 import type { Look } from '../lib/looks'
-import { deleteLookWithAssets, fetchLookWithImages, updateLook } from '../lib/lookService'
+import { deleteLookWithAssets, fetchLookWithImages, updateLook, upsertLookImage, getAcceptedTypes } from '../lib/lookService'
+import { useAuth } from '../lib/auth'
+
 
 type LayoutMode = 'split' | 'stack'
 type SaveState = 'idle' | 'saving' | 'saved' | 'error'
@@ -78,6 +80,7 @@ function drawPlaceholder(ctx: CanvasRenderingContext2D, x: number, y: number, w:
 export default function LookDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [look, setLook] = useState<Look | null>(null)
   const [images, setImages] = useState<{ inspoUrl: string | null; myUrl: string | null }>({
     inspoUrl: null,
@@ -100,7 +103,36 @@ export default function LookDetail() {
 
   const savedRef = useRef<{ title: string; notes: string }>({ title: '', notes: '' })
   const saveTimerRef = useRef<number | null>(null)
+  const inspoInputRef = useRef<HTMLInputElement | null>(null)
+const myInputRef = useRef<HTMLInputElement | null>(null)
   const savedIndicatorRef = useRef<number | null>(null)
+
+const handlePickImage = async (kind: 'inspo' | 'me', file: File | null) => {
+  if (!file) return
+  if (!user || !look) {
+    showToast('You need to be logged in.', 'error')
+    return
+  }
+
+  const { signedUrl, error } = await upsertLookImage({
+    userId: user.id,
+    lookId: look.id,
+    kind,
+    file
+  })
+
+  if (error) {
+    showToast(error, 'error')
+    return
+  }
+
+  setImages((prev) => ({
+    ...prev,
+    ...(kind === 'inspo' ? { inspoUrl: signedUrl ?? prev.inspoUrl } : { myUrl: signedUrl ?? prev.myUrl })
+  }))
+}
+
+
 
   const showToast = (message: string, variant: 'info' | 'error' = 'error') => {
     setToast({ open: true, message, variant })
@@ -308,6 +340,7 @@ export default function LookDetail() {
     )
   }
 
+  
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -367,34 +400,56 @@ export default function LookDetail() {
   >
     {/* Inspo */}
 <Card className="snap-start overflow-hidden p-0">
-      <div className="space-y-3 p-4">
-        <p className="type-eyebrow">Inspo</p>
-      </div>
-      <div className="aspect-[4/5] overflow-hidden bg-canvas">
-        {images.inspoUrl ? (
-          <img src={images.inspoUrl} alt="Inspo reference" className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
-            No image yet
-          </div>
-        )}
-      </div>
+     <div className="flex items-center justify-between gap-4 p-4">
+  <p className="type-eyebrow">Inspo</p>
+
+  <div className="flex items-center gap-2">
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      onClick={() => inspoInputRef.current?.click()}
+    >
+      {images.inspoUrl ? 'Replace' : 'Add'}
+    </Button>
+
+    <input
+      ref={inspoInputRef}
+      type="file"
+      accept={getAcceptedTypes()}
+      className="hidden"
+      onChange={(e) => void handlePickImage('inspo', e.target.files?.[0] ?? null)}
+    />
+  </div>
+</div>
+
     </Card>
 
     {/* My photo */}
 <Card className="snap-start overflow-hidden p-0">
-      <div className="space-y-3 p-4">
-        <p className="type-eyebrow">My photo</p>
-      </div>
-      <div className="aspect-[4/5] overflow-hidden bg-canvas">
-        {images.myUrl ? (
-          <img src={images.myUrl} alt="My look photo" className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.3em] text-muted">
-            No image yet
-          </div>
-        )}
-      </div>
+     <div className="flex items-center justify-between gap-4 p-4">
+  <p className="type-eyebrow">My photo</p>
+
+  <div className="flex items-center gap-2">
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      onClick={() => myInputRef.current?.click()}
+    >
+      {images.myUrl ? 'Replace' : 'Add'}
+    </Button>
+
+    <input
+      ref={myInputRef}
+      type="file"
+      accept={getAcceptedTypes()}
+      className="hidden"
+      onChange={(e) => void handlePickImage('me', e.target.files?.[0] ?? null)}
+    />
+  </div>
+</div>
+
     </Card>
   </div>
 </div>

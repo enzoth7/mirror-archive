@@ -258,3 +258,43 @@ export async function deleteLookWithAssets(lookId: string) {
 }
 
 export { MAX_FILE_BYTES }
+
+export async function upsertLookImage(params: {
+  userId: string
+  lookId: string
+  kind: 'inspo' | 'me'
+  file: File
+}) {
+  const validationError = validateImageFile(params.file)
+  if (validationError) return { error: validationError as string }
+
+  const ext = params.file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const filename = `${crypto.randomUUID()}.${ext}`
+  const path = `${params.userId}/${params.lookId}/${params.kind}/${filename}`
+
+  // 1) subir a storage
+  const { error: uploadError } = await supabase.storage
+    .from('lookbook')
+    .upload(path, params.file, { upsert: false, contentType: params.file.type })
+
+  if (uploadError) return { error: uploadError.message }
+
+  // 2) upsert en look_images (requiere unique index look_id+kind)
+  const { error: upsertError } = await supabase
+    .from('look_images')
+    .upsert(
+      { look_id: params.lookId, kind: params.kind, storage_path: path },
+      { onConflict: 'look_id,kind' }
+    )
+
+  if (upsertError) return { error: upsertError.message }
+
+  // 3) signed url para refrescar UI
+  const { data: signed, error: signedError } = await supabase.storage
+    .from('lookbook')
+    .createSignedUrl(path, 60 * 60)
+
+  if (signedError) return { error: signedError.message }
+
+  return { signedUrl: signed.signedUrl, storagePath: path, error: null as string | null }
+}
